@@ -1,103 +1,129 @@
-import Image from "next/image";
+"use client"
+
+import { useState, useRef, useEffect } from "react";
+import { Delete, CornerDownLeft, Trash2, Copy, ChevronUp, SendHorizontal } from "lucide-react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [input, setInput] = useState("");
+  const [dialogo, setDialogo] = useState("");
+  const [copiado, setCopiado] = useState(false);
+  const [isUpperCase, setIsUpperCase] = useState(true); 
+  const inputRef = useRef<HTMLDivElement>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // Garantir que o input role para a esquerda automaticamente
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.scrollLeft = inputRef.current.scrollWidth;
+    }
+  }, [input]); // Atualiza sempre que o input mudar
+
+  const handleKeyPress = (key: string) => {
+    if (key === "Backspace") {
+      setInput((prev) => prev.slice(0, -1));
+    } else {
+      setInput((prev) => prev + key);
+    }
+
+    if (key === "send") {
+      setDialogo((prev) => prev + "\n" + input); // Adiciona nova linha ao enviar
+      setInput("");
+    }
+  };
+
+  const copiarTexto = () => {
+    navigator.clipboard.writeText(dialogo);
+    setCopiado(true);
+    setTimeout(() => setCopiado(false), 2000);
+  };
+
+  const letters = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
+                   "A", "S", "D", "F", "G", "H", "J", "K", "L",
+                   "Z", "X", "C", "V", "B", "N", "M"];
+
+  const keys = [
+    "+","-","/","*","=","[","]","?",";",",",
+    "!","@","#","$","%","(",")","{","}",":",
+    "1","2","3","4","5","6","7","8","9","0",
+    ...letters,
+    "Backspace",
+    "up","Enter","copy","Space","clear","lixo","send"
+  ];
+
+  return (
+    <div className="container flex flex-col items-center">
+      {/*Tela de mensagem com quebras de linha dinâmicas */}
+      <div className="mt-4 mb-4 p-2 border border-gray-500 lg:w-96 w-80 min-h-60 text-left bg-gray-600 flex flex-col justify-between">
+        <div>
+          {dialogo.split("\n").map((line, index) => (
+            <div key={index}>{line}</div>
+          ))}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          className="bg-gray-700 text-white px-2 py-1 rounded self-end mt-2 text-[10px]"
+          onClick={copiarTexto}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          {copiado ? "✅ Copiado!" : "📋 Copiar"}
+        </button>
+      </div>
+      
+      {/* Display do teclado com rolagem no input */}
+      <div 
+        ref={inputRef} 
+        className="mt-4 mb-4 p-2 h-10 border border-gray-500 w-80 text-left bg-gray-600 overflow-x-auto whitespace-nowrap"
+      >
+        {input}
+      </div>
+      
+      {/* Layout do teclado */}
+      <div className="lg:w-96 w-80 h-40 grid grid-cols-10 gap-1">
+        {keys.map((key, index) => {
+          const displayKey = letters.includes(key)
+            ? (isUpperCase ? key : key.toLowerCase())
+            : key;
+
+          return (
+            <button
+              key={index}
+              className={`bg-gray-800 text-white flex justify-center items-center p-1 rounded 
+                ${key === "Space" || key === "Backspace" || key === "Enter" ? "text-[16px]" : ""} 
+                ${key === "Enter" ? "col-span-2" : ""}  
+                ${key === "Space" ? "col-span-5" : ""} 
+                ${key === "clear" ? "col-span-2" : ""}
+                ${key === "?" ? "question-mark" : ""}
+              `}
+              onClick={() => {
+                if (key === "clear") {
+                  setInput("");
+                } else if (key === "up") {
+                  setIsUpperCase((prev) => !prev);
+                } else {
+                  handleKeyPress(key === "Space" ? " " : displayKey);
+                }
+                if (key === "lixo") {
+                  setDialogo("");
+                  setInput("");
+                }
+                if (key === "send") {
+                  setInput("");
+                }
+                if (key === "copy") {
+                  copiarTexto();
+                  setInput("");
+                }
+              }}
+            >
+              {key === "Backspace" ? <Delete size={18} /> :
+              key === "Enter" ? <CornerDownLeft size={18} /> :
+              key === "lixo" ? <Trash2 size={18} /> :
+              key === "copy" ? <Copy size={18} /> :
+              key === "up" ? <ChevronUp size={18} /> :
+              key === "send" ? <SendHorizontal size={18} /> :
+              key === "clear" ? "Clear" :
+              displayKey}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
