@@ -110,6 +110,9 @@ export default function Home() {
                   copiarTexto();
                   setInput("");
                 }
+                if (key === "Enter") {
+                  setTimeout(() => setInput(""), 1000);                  
+                }
               }}
             >
               {key === "Backspace" ? <Delete size={18} /> :
